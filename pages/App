@@ -1,0 +1,109 @@
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import Login from './components/Login/Login';
+import { Routes, Route, useNavigate } from "react-router-dom";
+import StaffTable from './components/Masters/Staff/StaffTable';
+import Create from './components/Masters/Staff/Create';
+import Edit from './components/Masters/Staff/Edit';
+import View from './components/Masters/Staff/View';
+import Sidebar from './Sidebar/Sidebar';
+import ArtistCreate from './components/Masters/Artist/Create';
+import ArtistTable from './components/Masters/Artist/ArtistTable';
+import ArtistEdit from './components/Masters/Artist/Edit';
+import ArtistView from './components/Masters/Artist/View';
+import SongCreate from './components/Masters/Songs/Create';
+import SongTable from './components/Masters/Songs/SongTable';
+import SongEdit from './components/Masters/Songs/Edit';
+import SongView from './components/Masters/Songs/View';
+import SocietyCreate from './components/Masters/Society/Create';
+import SocietyTable from './components/Masters/Society/SocietyTable';
+import SocietyView from './components/Masters/Society/View';
+import SocietyEdit from './components/Masters/Society/Edit';
+import ClientCreate from './components/Masters/Client/Create';
+import ClientTable from './components/Masters/Client/ClientTable';
+import ClientEdit from './components/Masters/Client/Edit';
+import ClientView from './components/Masters/Client/ClientView';
+import Testing from './components/RankingUpload/Testing';
+import Bar from './components/RankingUpload/Bar';
+import Dashboard from './components/Dashboard/Dashboard';
+import jwtDecode from 'jwt-decode';
+import { CardFooter } from 'react-bootstrap';
+import FinalUpload from './components/RankingUpload/FinalUpload/FinalUpload';
+
+function App() {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    navigate('/home');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    navigate('/login');
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const exp = decoded.exp * 1000;
+        if (exp < Date.now()) {
+          handleLogout(); // Token expired, so log out and navigate to login
+        } else {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        handleLogout(); // Token is invalid, so log out and navigate to login
+      }
+    }
+  }, [navigate]);
+
+  return (
+    <div>
+      {isLoggedIn ? (
+        <Sidebar onLogout={handleLogout}>
+          <Routes>
+            <Route path="/home" element={<Dashboard />} />
+            <Route path='/cs/:id' element={<Testing />} />
+            <Route path='/bar' element={<Bar />} />
+            <Route path='/screate' element={<Create />} />
+            <Route path='/sindex/:pointindex' element={<StaffTable />} />
+            <Route path='/sedit/:id/:pointindex' element={<Edit />} />
+            <Route path='/sview/:id/:pointindex' element={<View />} />
+            <Route path='/artistCreate' element={<ArtistCreate />} />
+            <Route path='/artistTable/:pointindex' element={<ArtistTable />} />
+            <Route path='/artistEdit/:id/:pointindex' element={<ArtistEdit />} />
+            <Route path='/artistView/:id/:pointindex' element={<ArtistView />} />
+            <Route path='/songCreate' element={<SongCreate />} />
+            <Route path='/songTable/:pointindex' element={<SongTable />} />
+            <Route path='/songEdit/:id/:pointindex' element={<SongEdit />} />
+            <Route path='/songView/:id/:pointindex' element={<SongView />} />
+            <Route path='/societyCreate' element={<SocietyCreate />} />
+            <Route path='/societyTable/:pointindex' element={<SocietyTable />} />
+            <Route path='/societyEdit/:id/:pointindex' element={<SocietyEdit />} />
+            <Route path='/societyView/:id/:pointindex' element={<SocietyView />} />
+            <Route path='/clientCreate' element={<ClientCreate />} />
+            <Route path='/clientTable/:pointindex' element={<ClientTable />} />
+            <Route path='/clientEdit/:id/:pointindex' element={<ClientEdit />} />
+            <Route path='/clientView/:id/:pointindex' element={<ClientView />} />
+            <Route path='/final' element={<FinalUpload />} />
+          </Routes>
+        </Sidebar>
+      ) : (
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+        </Routes>
+      )}
+      <CardFooter className='text-center text-muted'>
+        © 2024 LNV Digital Systems Pvt. Ltd. All Rights Reserved.
+      </CardFooter>
+    </div>
+  );
+}
+
+export default App;
