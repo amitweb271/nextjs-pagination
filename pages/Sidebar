@@ -1,1 +1,195 @@
+import React, { useState } from 'react';
+import { IoMdLogOut, IoMdArrowDropright, IoMdArrowDropleft } from "react-icons/io";
+import { RiFolderUploadFill } from "react-icons/ri";
+import { Accordion } from 'react-bootstrap';
+
+const Sidebar = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
+
+  const sidebarWidth = isOpen ? '240px' : '70px';
+  const contentWidth = isOpen ? 'calc(100% - 240px)' : 'calc(100% - 70px)';
+  const searchWidth = isOpen ? 'calc(100% - 270px)' : 'calc(100% - 100px)';
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <div className={`sidebar-container ${isHovered ? 'open' : ''}`} style={{ width: sidebarWidth }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <div className='sidebar-header'>
+          <a href="#" className="sidebar-brand" style={{ display: isOpen ? 'block' : 'none' }}>
+            JOSHUA
+          </a>
+          <div onClick={toggleSidebar} style={{ cursor: 'pointer', padding: '10px' }}>
+            {isOpen ? <IoMdArrowDropleft size={24} /> : <IoMdArrowDropright size={24} />}
+          </div>
+        </div>
+        <div className='side-list sider'>
+          <ul className='side-ul font-size'>
+            <span className='spammer1' style={{ display: isOpen ? 'block' : 'none' }}>MAIN</span>
+            <Accordion>
+              <Accordion.Item eventKey='0'>
+                <Accordion.Header>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-box link-icon">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                  <span className={isOpen ? 'header1' : 'header'}>Dashboard</span>
+                </Accordion.Header>
+                <Accordion.Body />
+              </Accordion.Item>
+              <span className='spammer1 jj' style={{ display: isOpen ? 'block' : 'none' }}>WEB Masters</span>
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-music link-icon">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                  <span className={isOpen ? 'header1' : 'header'}>Masters</span>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <ul>
+                    <li className='side-sub-li font-size'>Staff</li>
+                    <li className='side-sub-li font-size'>Artist</li>
+                    <li className='side-sub-li font-size'>Client</li>
+                    <li className='side-sub-li font-size'>Society</li>
+                    <li className='side-sub-li font-size'>Song</li>
+                  </ul>
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>
+                  <RiFolderUploadFill width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-message-square link-icon" />
+                  <span className={isOpen ? 'header1' : 'header'}>Ranking Upload</span>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <ul>
+                    <li className='side-sub-li font-size'>Song Matching</li>
+                    <li className='side-sub-li font-size'>FinalUpload</li>
+                  </ul>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </ul>
+        </div>
+      </div>
+      <div style={{ flexGrow: 1 }}>
+        <div className='navbar-section' style={{ marginLeft: sidebarWidth }}>
+          <div className='second-nav' style={{ width: contentWidth }}>
+            <div className='TIMESEARC' style={{ width: searchWidth }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-search searching">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input type='text' className='textin' placeholder='Search' />
+            </div>
+            <div className='tomi english' style={{ marginRight: '2px' }}>
+              <IoMdLogOut className='logouticon' />
+            </div>
+          </div>
+        </div>
+        <div className='children' style={{ width: `calc(97% - ${sidebarWidth})`, marginLeft: `calc(${sidebarWidth} + 13px)`, marginTop: '4.5%' }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Sidebar;
+
+
+
+
+.navbar-section {
+  display: flex;
+  align-items: center;
+}
+
+.first-nav {
+  display: flex;
+  align-items: center;
+}
+
+.second-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: width 0.3s ease, margin-left 0.3s ease;
+}
+
+.TIMESEARC {
+  display: flex;
+  align-items: center;
+}
+
+.textin {
+  margin-left: 8px;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  transition: width 0.3s ease;
+}
+
+.tomi.english {
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+
+.logouticon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.sidebar-container {
+  position: fixed;
+  height: 100%;
+  background-color: #f8f9fa;
+  transition: width 0.3s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.sidebar-brand {
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+}
+
+.side-list {
+  padding: 10px;
+}
+
+.side-ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.side-li {
+  margin: 10px 0;
+}
+
+.header {
+  display: none;
+}
+
+.header1 {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.children {
+  transition: width 0.3s ease, margin-left 0.3s ease;
+}
 
