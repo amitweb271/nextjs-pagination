@@ -1,5 +1,477 @@
 import React, { useState } from 'react';
 import { IoMdLogOut, IoMdArrowDropright, IoMdArrowDropleft } from "react-icons/io";
+import { RiNotification3Fill } from "react-icons/ri";
+
+import { RiFolderUploadFill } from "react-icons/ri";
+import { Accordion } from 'react-bootstrap';
+
+const Sidebar = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
+
+  const sidebarWidth = isOpen ? '240px' : '70px';
+  const contentWidth = isOpen ? 'calc(100% - 240px)' : 'calc(100% - 70px)';
+  const searchWidth = isOpen ? 'calc(100% - 270px)' : 'calc(100% - 100px)';
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <div className={`sidebar-container ${isHovered ? 'open' : ''}`} style={{ width: sidebarWidth }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <div className='sidebar-header'>
+          <a href="#" className="sidebar-brand" style={{ display: isOpen ? 'block' : 'none' }}>
+            JOSHUA
+          </a>
+          <div onClick={toggleSidebar} style={{ cursor: 'pointer', padding: '10px' }}>
+            {isOpen ? <IoMdArrowDropleft size={24} /> : <IoMdArrowDropright size={24} />}
+          </div>
+        </div>
+        <div className='side-list sider'>
+          <ul className='side-ul font-size'>
+            {/* <span className='spammer1' style={{ display: isOpen ? 'block' : 'none' }}>MAIN</span> */}
+            <Accordion>
+              <Accordion.Item eventKey='0'>
+                <Accordion.Header>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-box link-icon">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                  <span className={isOpen ? 'header1' : 'header'}>Dashboard</span>
+                </Accordion.Header>
+                <Accordion.Body />
+              </Accordion.Item>
+              {/* <span className='spammer1 jj' style={{ display: isOpen ? 'block' : 'none' }}>WEB Masters</span> */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-music link-icon">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                  <span className={isOpen ? 'header1' : 'header'}>Masters</span>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <ul>
+                    <li className='side-sub-li font-size'>Staff</li>
+                    <li className='side-sub-li font-size'>Artist</li>
+                    <li className='side-sub-li font-size'>Client</li>
+                    <li className='side-sub-li font-size'>Society</li>
+                    <li className='side-sub-li font-size'>Song</li>
+                  </ul>
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>
+                  <RiFolderUploadFill width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-message-square link-icon" />
+                  <span className={isOpen ? 'header1' : 'header'}>Ranking Upload</span>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <ul>
+                    <li className='side-sub-li font-size'>Song Matching</li>
+                    <li className='side-sub-li font-size'>FinalUpload</li>
+                  </ul>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </ul>
+        </div>
+      </div>
+      <div style={{ flexGrow: 1 }}>
+        <div className='navbar-section' style={{ marginLeft: sidebarWidth }}>
+          <div className='second-nav' style={{ width: contentWidth }}>
+            <div className='TIMESEARC' style={{ width: searchWidth }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-search searching">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input type='text' className='textin' placeholder='Search' />
+            </div>
+            <div className='tomi english' style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
+            <RiNotification3Fill className='notificationicon' />
+              <IoMdLogOut className='logouticon' />
+            </div>
+          </div>
+        </div>
+        <div className='children' style={{ width: `calc(97% - ${sidebarWidth})`, marginLeft: `calc(${sidebarWidth} + 13px)`, marginTop: '4.5%' }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Sidebar;
+
+
+
+
+
+
+:root {
+  --bs-breakpoint-xs: 0;
+  --bs-breakpoint-sm: 576px;
+  --bs-breakpoint-md: 768px;
+  --bs-breakpoint-lg: 992px;
+  --bs-breakpoint-xl: 1200px;
+  --bs-breakpoint-xxl: 1400px;
+}
+:root, [data-bs-theme=light] {
+  --bs-blue: #0d6efd;
+  --bs-indigo: #6610f2;
+  --bs-purple: #6f42c1;
+  --bs-pink: #d63384;
+  --bs-red: #dc3545;
+  --bs-orange: #fd7e14;
+  --bs-yellow: #ffc107;
+  --bs-green: #198754;
+  --bs-teal: #20c997;
+  --bs-cyan: #0dcaf0;
+  --bs-black: #000;
+  --bs-white: #fff;
+  --bs-gray: #6c757d;
+  --bs-gray-dark: #343a40;
+  --bs-gray-100: #f8f9fa;
+  --bs-gray-200: #e9ecef;
+  --bs-gray-300: #dee2e6;
+  --bs-gray-400: #ced4da;
+  --bs-gray-500: #adb5bd;
+  --bs-gray-600: #6c757d;
+  --bs-gray-700: #495057;
+  --bs-gray-800: #343a40;
+  --bs-gray-900: #212529;
+  --bs-primary: #0d6efd;
+  --bs-secondary: #6c757d;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
+  --bs-primary-rgb: 13, 110, 253;
+  --bs-secondary-rgb: 108, 117, 125;
+  --bs-success-rgb: 25, 135, 84;
+  --bs-info-rgb: 13, 202, 240;
+  --bs-warning-rgb: 255, 193, 7;
+  --bs-danger-rgb: 220, 53, 69;
+  --bs-light-rgb: 248, 249, 250;
+  --bs-dark-rgb: 33, 37, 41;
+  --bs-primary-text-emphasis: #052c65;
+  --bs-secondary-text-emphasis: #2b2f32;
+  --bs-success-text-emphasis: #0a3622;
+  --bs-info-text-emphasis: #055160;
+  --bs-warning-text-emphasis: #664d03;
+  --bs-danger-text-emphasis: #58151c;
+  --bs-light-text-emphasis: #495057;
+  --bs-dark-text-emphasis: #495057;
+  --bs-primary-bg-subtle: #cfe2ff;
+  --bs-secondary-bg-subtle: #e2e3e5;
+  --bs-success-bg-subtle: #d1e7dd;
+}
+
+
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  margin: 0;
+  font-family: var(--bs-body-font-family);
+  font-size: var(--bs-body-font-size);
+  font-weight: var(--bs-body-font-weight);
+  line-height: var(--bs-body-line-height);
+  color: var(--bs-body-color);
+  text-align: var(--bs-body-text-align);
+  background-color: var(--bs-body-bg);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+.side-list {
+  padding: 10px;
+}
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+user agent stylesheet
+div {
+  display: block;
+  unicode-bidi: isolate;
+}
+
+
+
+.accordion-button:hover {
+  z-index: 2;
+}
+.accordion-button:not(.collapsed) {
+  color: var(--bs-accordion-active-color);
+  background-color: var(--bs-accordion-active-bg);
+  box-shadow: inset 0 calc(-1* var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
+}
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  .accordion-button {
+      transition: none;
+  }
+}
+.accordion-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
+  font-size: 1rem;
+  color: var(--bs-accordion-btn-color);
+  text-align: left;
+  /* background-color: var(--bs-accordion-btn-bg);#f8f9fa */
+  background-color: #f8f9fa;
+  border: 0;
+  border-radius: 0;
+  overflow-anchor: none;
+  transition: var(--bs-accordion-transition);
+}
+[type=button], [type=reset], [type=submit], button {
+  -webkit-appearance: button;
+}
+button, select {
+  text-transform: none;
+}
+button, input, optgroup, select, textarea {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+button {
+  border-radius: 0;
+}
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+
+.h2, h2 {
+  font-size: calc(1.325rem + .9vw);
+}
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: .5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--bs-heading-color);
+}
+user agent stylesheet
+h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+.accordion-item {
+  color: var(--bs-accordion-color);
+  /* background-color: var(--bs-accordion-bg);#f8f9fa */
+  background-color: #f8f9fa;
+  border: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
+}
+.accordion {
+  --bs-accordion-color: var(--bs-body-color);
+  /* --bs-accordion-bg: var(--bs-body-bg); */
+  --bs-accordion-bg: #f8f9fa;
+  --bs-accordion-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
+  /* --bs-accordion-border-color: var(--bs-border-color); */
+  --bs-accordion-border-color: #f8f9fa;
+  --bs-accordion-border-width: var(--bs-border-width);
+  --bs-accordion-border-radius: var(--bs-border-radius);
+  --bs-accordion-inner-border-radius: calc(var(--bs-border-radius) - (var(--bs-border-width)));
+  --bs-accordion-btn-padding-x: 1.25rem;
+  --bs-accordion-btn-padding-y: 1rem;
+  --bs-accordion-btn-color: var(--bs-body-color);
+  --bs-accordion-btn-bg: var(--bs-accordion-bg);
+  --bs-accordion-btn-icon: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e);
+  --bs-accordion-btn-icon-width: 1.25rem;
+  --bs-accordion-btn-icon-transform: rotate(-180deg);
+  --bs-accordion-btn-icon-transition: transform 0.2s ease-in-out;
+  --bs-accordion-btn-active-icon: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23052c65'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e);
+  --bs-accordion-btn-focus-border-color: #86b7fe;
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --bs-accordion-body-padding-x: 1.25rem;
+  --bs-accordion-body-padding-y: 1rem;
+  --bs-accordion-active-color: var(--bs-primary-text-emphasis);
+  --bs-accordion-active-bg: var(--bs-primary-bg-subtle);
+}
+
+.accordion-item:first-of-type .accordion-button {
+  border-top-left-radius: var(--bs-accordion-inner-border-radius);
+  border-top-right-radius: var(--bs-accordion-inner-border-radius);
+}
+button:focus:not(:focus-visible) {
+  outline: 0;
+}
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+  cursor: pointer;
+}
+.accordion-button:focus {
+  z-index: 3;
+  /* border-color: var(--bs-accordion-btn-focus-border-color); */
+  border-color:#f8f9fa ;
+  outline: 0;
+  /* box-shadow: var(--bs-accordion-btn-focus-box-shadow); */
+  box-shadow: #f8f9fa;
+
+}
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+  cursor: pointer;
+}
+[type=button], [type=reset], [type=submit], button {
+  -webkit-appearance: button;
+}
+.side-ul {
+  list-style-type: none;
+  padding: 0;
+}
+user agent stylesheet
+ul {
+  list-style-type: disc;
+}
+
+/* General Layout */
+.sidebar-container {
+  position: fixed;
+  height: 100%;
+  background-color: #f8f9fa;
+  transition: width 0.3s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.sidebar-brand {
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+}
+
+.side-list {
+  padding: 10px;
+}
+
+.side-ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+/* Sidebar Accordion Styling */
+.header {
+  display: none;
+}
+
+.header1 {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+/* Navbar Styles */
+.navbar-section {
+  background-color:#f8f9fa;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 55px;
+  width: 100%;
+  border-bottom: 1px solid rgb(216, 215, 215);
+  border-left: 1px solid rgb(207, 207, 207);
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  z-index: 1000;
+}
+
+.second-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.TIMESEARC {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 5px 10px;
+  background-color: #f8f9fa;
+  margin: auto;
+}
+
+.textin {
+  border: none;
+  outline: none;
+  margin-left: 8px;
+  width: 100%;
+}
+
+.textin::placeholder {
+  color: #888;
+}
+
+.searching {
+  color: #888;
+}
+
+.tomi.english {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logouticon,
+.notificationicon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Children section */
+.children {
+  transition: width 0.3s ease, margin-left 0.3s ease;
+}
+
+
+
+
+
+
+
+
+
+
+import React, { useState } from 'react';
+import { IoMdLogOut, IoMdArrowDropright, IoMdArrowDropleft } from "react-icons/io";
 import { RiFolderUploadFill } from "react-icons/ri";
 import { Accordion } from 'react-bootstrap';
 
