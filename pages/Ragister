@@ -1,5 +1,205 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Card, Form, Row, Col, Spinner } from "react-bootstrap";
+import Select from 'react-select';
+import Swal from "sweetalert2";
+import styled from 'styled-components';
+import { BASE_URL } from "../../services/Api";
+import authHeader from "../../services/auth-header";
+
+const Edit = () => {
+  const navigate = useNavigate();
+  const { staffId } = useParams();
+  const [staffname, setStaffname] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobileno, setMobileno] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState(null);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}staff/${staffId}`, {
+          headers: authHeader(),
+        });
+        const { staffname, email, mobileno, roles } = response.data;
+        setStaffname(staffname);
+        setEmail(email);
+        setMobileno(mobileno);
+        setRole({ value: roles[0].id, label: roles[0].role });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch staff data. Please try again.',
+        });
+      }
+    };
+
+    const fetchRoleData = async () => {
+      try {
+        const response = await axios.get(BASE_URL + 'role/getAllRole');
+        setRoleOptions(response.data.map(role => ({ value: role.id, label: role.role })));
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch roles. Please try again.',
+        });
+      }
+    };
+
+    fetchStaffData();
+    fetchRoleData();
+  }, [staffId]);
+
+  const handleRoleChange = (selectedOption) => {
+    setRole(selectedOption);
+  };
+
+  const validateForm = () => {
+    if (!staffname || !email || !mobileno || !role) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please fill out all fields.',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    setIsLoading(true);
+
+    const staffData = {
+      staffname,
+      email,
+      mobileno,
+      roles: [{ id: role.value }],
+    };
+
+    if (password) {
+      staffData.password = password;
+    }
+
+    try {
+      await axios.put(`${BASE_URL}staff/${staffId}`, staffData, {
+        headers: authHeader(),
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Staff details updated successfully!',
+      });
+      navigate("/sindex/1");
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'An error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <StyledCard>
+        <Card.Header>
+          <Title>EDIT STAFF</Title>
+          <Link to="/sindex/1">
+            <BackButton>BACK</BackButton>
+          </Link>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Row>
+              <Col md="6">
+                <Form.Group controlId="formStaffName">
+                  <Form.Label>Staff Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter staff name"
+                    value={staffname}
+                    onChange={(e) => setStaffname(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md="6">
+                <Form.Group controlId="formEmail">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col md="6">
+                <Form.Group controlId="formMobileNumber">
+                  <Form.Label>Mobile Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter mobile number"
+                    value={mobileno}
+                    onChange={(e) => setMobileno(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md="6">
+                <Form.Group controlId="formPassword">
+                  <Form.Label>Password (leave blank to keep current password)</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Enter new password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col md="6">
+                <Form.Group controlId="formRole">
+                  <Form.Label>Role</Form.Label>
+                  <Select
+                    value={role}
+                    onChange={handleRoleChange}
+                    options={roleOptions}
+                    placeholder="Select role"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <SubmitButton type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'UPDATE'}
+            </SubmitButton>
+          </Form>
+        </Card.Body>
+      </StyledCard>
+    </Container>
+  );
+};
+
+export default Edit;
+
+
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, Form, Row, Col, Spinner } from "react-bootstrap";
 import Select from 'react-select';
