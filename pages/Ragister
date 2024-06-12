@@ -1,3 +1,256 @@
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Card, Form, Row, Col, Spinner } from "react-bootstrap";
+import Select from 'react-select';
+import Swal from "sweetalert2";
+import styled from 'styled-components';
+import { BASE_URL } from "../../services/Api";
+import authHeader from "../../services/auth-header";
+
+// Styled Components
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f7f7f7;
+  padding: 20px;
+`;
+
+const StyledCard = styled(Card)`
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+`;
+
+const BackButton = styled.button`
+  background-color: #6c757d;
+  border: none;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: white;
+  margin-left: auto;
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+const SubmitButton = styled.button`
+  background-color: #28a745;
+  border: none;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: 20px;
+  width: 100%;
+  color: white;
+  &:hover {
+    background-color: #218838;
+  }
+  &:disabled {
+    background-color: #94d3a2;
+  }
+`;
+
+const Edit = () => {
+  const navigate = useNavigate();
+  const { staffId } = useParams();
+  const [staffname, setStaffname] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobileno, setMobileno] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState(null);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [originalData, setOriginalData] = useState({});
+
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}staff/${staffId}`, {
+          headers: authHeader(),
+        });
+        const { staffname, email, mobileno, roles } = response.data;
+        setStaffname(staffname);
+        setEmail(email);
+        setMobileno(mobileno);
+        setRole({ value: roles[0].id, label: roles[0].role });
+        setOriginalData({ staffname, email, mobileno, role: roles[0] });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch staff data. Please try again.',
+        });
+      }
+    };
+
+    const fetchRoleData = async () => {
+      try {
+        const response = await axios.get(BASE_URL + 'role/getAllRole');
+        setRoleOptions(response.data.map(role => ({ value: role.id, label: role.role })));
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch roles. Please try again.',
+        });
+      }
+    };
+
+    fetchStaffData();
+    fetchRoleData();
+  }, [staffId]);
+
+  const handleRoleChange = (selectedOption) => {
+    setRole(selectedOption);
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    const updatedFields = {};
+
+    if (staffname !== originalData.staffname) updatedFields.staffname = staffname;
+    if (email !== originalData.email) updatedFields.email = email;
+    if (mobileno !== originalData.mobileno) updatedFields.mobileno = mobileno;
+    if (role?.value !== originalData.role.id) updatedFields.roles = [{ id: role.value }];
+    if (password) updatedFields.password = password;
+
+    if (Object.keys(updatedFields).length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: 'No Changes',
+        text: 'No changes were made.',
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await axios.put(`${BASE_URL}staff/${staffId}`, updatedFields, {
+        headers: authHeader(),
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Staff details updated successfully!',
+      });
+      navigate("/sindex/1");
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'An error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <StyledCard>
+        <Card.Header>
+          <Title>EDIT STAFF</Title>
+          <Link to="/sindex/1">
+            <BackButton>BACK</BackButton>
+          </Link>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Row>
+              <Col md="6">
+                <Form.Group controlId="formStaffName">
+                  <Form.Label>Staff Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter staff name"
+                    value={staffname}
+                    onChange={(e) => setStaffname(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md="6">
+                <Form.Group controlId="formEmail">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col md="6">
+                <Form.Group controlId="formMobileNumber">
+                  <Form.Label>Mobile Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter mobile number"
+                    value={mobileno}
+                    onChange={(e) => setMobileno(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md="6">
+                <Form.Group controlId="formPassword">
+                  <Form.Label>Password (leave blank to keep current password)</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Enter new password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col md="6">
+                <Form.Group controlId="formRole">
+                  <Form.Label>Role</Form.Label>
+                  <Select
+                    value={role}
+                    onChange={handleRoleChange}
+                    options={roleOptions}
+                    placeholder="Select role"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <SubmitButton type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'UPDATE'}
+            </SubmitButton>
+          </Form>
+        </Card.Body>
+      </StyledCard>
+    </Container>
+  );
+};
+
+export default Edit;
+
+
+
+
+
+
+
+
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
