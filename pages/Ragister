@@ -1,3 +1,423 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { Card, Form, Spinner } from "react-bootstrap";
+import Swal from "sweetalert2";
+import styled from 'styled-components';
+import { BASE_URL } from "../../services/Api";
+import authHeader from "../../services/auth-header";
+
+const CreateBrand = () => {
+  const navigate = useNavigate();
+  const [brandName, setBrandName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateForm = () => {
+    if (!brandName) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please enter a brand name.',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    setIsLoading(true);
+
+    const brandData = {
+      name: brandName,
+    };
+
+    try {
+      await axios.post(BASE_URL + "brands", brandData, {
+        headers: authHeader(),
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Brand added successfully!',
+      });
+      navigate("/brands");
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'An error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <StyledCard>
+        <Card.Header>
+          <Title>ADD BRAND</Title>
+          <Link to="/brands">
+            <BackButton>BACK</BackButton>
+          </Link>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Form.Group controlId="formBrandName">
+              <Form.Label>Brand Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter brand name"
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+              />
+            </Form.Group>
+            <SubmitButton type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'SUBMIT'}
+            </SubmitButton>
+          </Form>
+        </Card.Body>
+      </StyledCard>
+    </Container>
+  );
+};
+
+export default CreateBrand;
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Card, Form, Spinner } from "react-bootstrap";
+import Swal from "sweetalert2";
+import styled from 'styled-components';
+import { BASE_URL } from "../../services/Api";
+import authHeader from "../../services/auth-header";
+
+const EditBrand = () => {
+  const navigate = useNavigate();
+  const { brandId } = useParams();
+  const [brandName, setBrandName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchBrandData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}brands/${brandId}`, {
+          headers: authHeader(),
+        });
+        setBrandName(response.data.name);
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch brand data. Please try again.',
+        });
+      }
+    };
+
+    fetchBrandData();
+  }, [brandId]);
+
+  const validateForm = () => {
+    if (!brandName) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please enter a brand name.',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    setIsLoading(true);
+
+    const brandData = {
+      name: brandName,
+    };
+
+    try {
+      await axios.put(`${BASE_URL}brands/${brandId}`, brandData, {
+        headers: authHeader(),
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Brand details updated successfully!',
+      });
+      navigate("/brands");
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'An error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <StyledCard>
+        <Card.Header>
+          <Title>EDIT BRAND</Title>
+          <Link to="/brands">
+            <BackButton>BACK</BackButton>
+          </Link>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Form.Group controlId="formBrandName">
+              <Form.Label>Brand Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter brand name"
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+              />
+            </Form.Group>
+            <SubmitButton type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'UPDATE'}
+            </SubmitButton>
+          </Form>
+        </Card.Body>
+      </StyledCard>
+    </Container>
+  );
+};
+
+export default EditBrand;
+
+
+
+import React, { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { Card, Form, Spinner } from "react-bootstrap";
+import Swal from "sweetalert2";
+import styled from 'styled-components';
+import { BASE_URL } from "../../services/Api";
+import authHeader from "../../services/auth-header";
+
+const CreateWarehouse = () => {
+  const navigate = useNavigate();
+  const [warehouseName, setWarehouseName] = useState("");
+  const [location, setLocation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateForm = () => {
+    if (!warehouseName || !location) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please fill out all fields.',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    setIsLoading(true);
+
+    const warehouseData = {
+      name: warehouseName,
+      location,
+    };
+
+    try {
+      await axios.post(BASE_URL + "warehouses", warehouseData, {
+        headers: authHeader(),
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Warehouse added successfully!',
+      });
+      navigate("/warehouses");
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'An error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <StyledCard>
+        <Card.Header>
+          <Title>ADD WAREHOUSE</Title>
+          <Link to="/warehouses">
+            <BackButton>BACK</BackButton>
+          </Link>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Form.Group controlId="formWarehouseName">
+              <Form.Label>Warehouse Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter warehouse name"
+                value={warehouseName}
+                onChange={(e) => setWarehouseName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formLocation">
+              <Form.Label>Location</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              />
+            </Form.Group>
+            <SubmitButton type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'SUBMIT'}
+            </SubmitButton>
+          </Form>
+        </Card.Body>
+      </StyledCard>
+    </Container>
+  );
+};
+
+export default CreateWarehouse;
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Card, Form, Spinner } from "react-bootstrap";
+import Swal from "sweetalert2";
+import styled from 'styled-components';
+import { BASE_URL } from "../../services/Api";
+import authHeader from "../../services/auth-header";
+
+const EditWarehouse = () => {
+  const navigate = useNavigate();
+  const { warehouseId } = useParams();
+  const [warehouseName, setWarehouseName] = useState("");
+  const [location, setLocation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWarehouseData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}warehouses/${warehouseId}`, {
+          headers: authHeader(),
+        });
+        setWarehouseName(response.data.name);
+        setLocation(response.data.location);
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch warehouse data. Please try again.',
+        });
+      }
+    };
+
+    fetchWarehouseData();
+  }, [warehouseId]);
+
+  const validateForm = () => {
+    if (!warehouseName || !location) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please fill out all fields.',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    setIsLoading(true);
+
+    const warehouseData = {
+      name: warehouseName,
+      location,
+    };
+
+    try {
+      await axios.put(`${BASE_URL}warehouses/${warehouseId}`, warehouseData, {
+        headers: authHeader(),
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Warehouse details updated successfully!',
+      });
+      navigate("/warehouses");
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'An error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <StyledCard>
+        <Card.Header>
+          <Title>EDIT WAREHOUSE</Title>
+          <Link to="/warehouses">
+            <BackButton>BACK</BackButton>
+          </Link>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Form.Group controlId="formWarehouseName">
+              <Form.Label>Warehouse Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter warehouse name"
+                value={warehouseName}
+                onChange={(e) => setWarehouseName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formLocation">
+              <Form.Label>Location</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              />
+            </Form.Group>
+            <SubmitButton type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'UPDATE'}
+            </SubmitButton>
+          </Form>
+        </Card.Body>
+      </StyledCard>
+    </Container>
+  );
+};
+
+export default EditWarehouse;
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
