@@ -1,0 +1,123 @@
+// PdfUpload.js
+import React, { useState } from 'react';
+import axios from 'axios';
+
+function PdfUpload({ onUpload }) {
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      alert('Please select a file!');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      // Simulate axios post
+      const fakeServerResponse = {
+        data: {
+          name: file.name,
+          url: URL.createObjectURL(file) // This creates a temporary URL for the file
+        }
+      };
+      onUpload(fakeServerResponse.data);
+    } catch (error) {
+      console.error('File upload error:', error);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" accept="application/pdf" onChange={handleFileChange} />
+      <button onClick={handleUpload}>Upload PDF</button>
+    </div>
+  );
+}
+
+export default PdfUpload;
+
+
+
+
+
+// PdfTable.js
+import React from 'react';
+
+function PdfTable({ files }) {
+  return (
+    <table border="1">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {files.map((file, index) => (
+          <tr key={index}>
+            <td>{file.name}</td>
+            <td>
+              <a href={file.url} target="_blank" rel="noopener noreferrer">Open</a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+export default PdfTable;
+
+// App.js
+import React, { useState } from 'react';
+import PdfUpload from './PdfUpload';
+import PdfTable from './PdfTable';
+
+function App() {
+  const [files, setFiles] = useState([]);
+
+  const handleFileUpload = (uploadedFile) => {
+    setFiles([...files, uploadedFile]);
+  };
+
+  return (
+    <div>
+      <h1>PDF File Upload and Display</h1>
+      <PdfUpload onUpload={handleFileUpload} />
+      <PdfTable files={files} />
+    </div>
+  );
+}
+
+export default App;
+
+
+/* App.css */
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+table {
+  margin: 20px auto;
+  border-collapse: collapse;
+  width: 60%;
+}
+
+table, th, td {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+}
+
+
