@@ -1,5 +1,47 @@
 
 import React, { useState } from 'react';
+import './App.css';
+
+const App = () => {
+  const [showProfile, setShowProfile] = useState(false);
+
+  const handleUserIconClick = () => {
+    setShowProfile(!showProfile);
+  };
+
+  return (
+    <div className="App">
+      {/* User Icon */}
+      <div className="user-icon" onClick={handleUserIconClick}>
+        <img src="user-icon.png" alt="User Icon" />
+      </div>
+
+      {/* User Profile Card */}
+      {showProfile && (
+        <div className="profile-card">
+          <div className="profile-image-container">
+            <div className="profile-image">
+              <img src="user-profile-image.png" alt="User" />
+            </div>
+          </div>
+          <h2 className="profile-name">John Doe</h2>
+          <p className="profile-email">john.doe@example.com</p>
+          <p className="profile-phone">(123) 456-7890</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+
+import React, { useState } from 'react';
 import { IoMdLogOut, IoMdArrowDropright, IoMdArrowDropleft } from "react-icons/io";
 import { RiNotification3Fill, RiFolderUploadFill } from "react-icons/ri";
 import { Accordion } from 'react-bootstrap';
