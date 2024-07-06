@@ -1,0 +1,84 @@
+import React, { useState } from 'react';
+
+const ProductTable = () => {
+  const [rows, setRows] = useState([
+    { product: '', quantity: 0, price: 0, total: 0, igst: 0, totalAmount: 0 }
+  ]);
+
+  const handleInputChange = (index, event) => {
+    const { name, value } = event.target;
+    const updatedRows = [...rows];
+    updatedRows[index][name] = value;
+    updatedRows[index].total = updatedRows[index].quantity * updatedRows[index].price;
+    updatedRows[index].igst = (updatedRows[index].total * 18) / 100; // Example IGST of 18%
+    updatedRows[index].totalAmount = updatedRows[index].total + updatedRows[index].igst;
+    setRows(updatedRows);
+  };
+
+  const handleAddRow = () => {
+    setRows([...rows, { product: '', quantity: 0, price: 0, total: 0, igst: 0, totalAmount: 0 }]);
+  };
+
+  const handleRemoveRow = (index) => {
+    const updatedRows = [...rows];
+    updatedRows.splice(index, 1);
+    setRows(updatedRows);
+  };
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>IGST</th>
+            <th>Total Amount</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, index) => (
+            <tr key={index}>
+              <td>
+                <select name="product" value={row.product} onChange={(e) => handleInputChange(index, e)}>
+                  <option value="">Select Product</option>
+                  <option value="Product1">Product 1</option>
+                  <option value="Product2">Product 2</option>
+                  <option value="Product3">Product 3</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  type="number"
+                  name="quantity"
+                  value={row.quantity}
+                  onChange={(e) => handleInputChange(index, e)}
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  name="price"
+                  value={row.price}
+                  onChange={(e) => handleInputChange(index, e)}
+                />
+              </td>
+              <td>{row.total.toFixed(2)}</td>
+              <td>{row.igst.toFixed(2)}</td>
+              <td>{row.totalAmount.toFixed(2)}</td>
+              <td>
+                <button onClick={() => handleRemoveRow(index)}>Remove</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={handleAddRow}>Add Row</button>
+    </div>
+  );
+};
+
+export default ProductTable;
